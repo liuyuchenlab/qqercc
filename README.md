@@ -17,44 +17,65 @@ library(qqercc)
 ```
 ###### 数据需要包含ERCC-基因，格式如下
 
+![image](https://github.com/user-attachments/assets/e63b865a-7cc6-441a-be71-c73ad5575ad0)
 
 
-```
-data(PCR)
-#PCR <- read.csv('test.csv')  
-```
-###### Gapdh可以换成其他基因，这一步可以得到相对表达量和三个图片：  
-
-###### 图片在plot里，第一张是普通的柱形图，第二张加上了p值，第三张加上了显著性标记 
-###### p值和显著性标记的位置是根据分组设置高度的，可以去AI或者PS里平移到合适位置
-###### p值计算使用近似T检验，可以使用relative数据去其他知名软件计算并绘图
-```
-results <- qqpcr(PCR, reference_gene = "Gapdh", control_group = "control")  
-```
-##### 柱形图  
-![image](https://github.com/user-attachments/assets/e88aaf11-bacf-46d7-bea7-db0787323342)
-
-##### p值柱形图  
-![image](https://github.com/user-attachments/assets/6498d295-17fe-4fc0-ad6c-c0fdf9a4f439)
-
-##### 显著性标记柱形图  
-![image](https://github.com/user-attachments/assets/0bd87dce-9cad-432c-8626-0d473a13eb75)
-
-###### 函数运行时会自动保存行列转换的CT值、相对表达值、统计数据和p值还有一张basic图片到自动创建的文件夹中，文件夹名为当天的日期。
-![image](https://github.com/user-attachments/assets/5f8052c7-84cc-4bd9-92d3-ca7012261c1b)
-
-##### 默认只有16个颜色，也可以添加自定义颜色和截断
-```
-custom_colors <- c("#FF0000", "#00FF00", "#0000FF")  # 用户自定义的颜色
-
-results <- qqpcr(PCR, 'Gapdh', 'control',  breaks = list(c(4, 10), c(14, 20),c(25,30)), custom_colors = custom_colors)
+###### 只可以输入XLSX文件：  
+###### 运行函数会自动创建ercc文件夹，并保存ERCC normalized文件，默认使用deseq2方法
+###### control_group指的是根据某一组进行relative计算得到总体reads数的比较结果
+###### 图片自动保存到ercc文件夹中
 
 ```
-##### 示例展示
-![plot_zoom_png](https://github.com/user-attachments/assets/79e13b2c-06e6-41a3-a904-d706bf6d915e)
+result <- qqercc("ercc.xlsx", control_group = "control")  
+```
+##### normalized total reads plot  
 
-##### 也可以自定义保存
-![image](https://github.com/user-attachments/assets/b661ec38-b609-431c-b799-658d3f0577bc)
+![image](https://github.com/user-attachments/assets/4e754b12-9064-4a58-bfb2-4ab76a14ba27)
+
+##### 可以添加自定义颜色和统计比较
+
+```
+#定义比较组
+comparisons_list <- list(
+  c("DMSO-2-cell", "PlaB-2-cell"))
+# 定义颜色，与比较组对应
+colors <- c("#FF5733", "#33FF57")  # 每个颜色对应comparisons_list中的一组比较
+#运行函数
+result <- qqercc("plab_ercc.xlsx", control_group = "DMSO-2-cell", 
+                 comparisons = comparisons_list, method = "deseq2", 
+                 format = "dot", 
+                 color = colors
+                )
+```
+![image](https://github.com/user-attachments/assets/7241afa4-73af-4550-944f-343e8919dab8)
+
+
+##### 可以通过format选择其他可视化形式：点图
+
+```
+result <- qqercc("ercc.xlsx", control_group = "control", 
+                 comparisons = comparisons_list,
+                 format = "dot"
+)
+```
+
+![image](https://github.com/user-attachments/assets/9910f215-20d4-4eb0-bedd-6053516420c0)
+
+###### 或者箱线图
+
+```
+result <- qqercc("ercc.xlsx", control_group = "control", 
+                 comparisons = comparisons_list,
+                 format = "box"
+)
+```
+
+![image](https://github.com/user-attachments/assets/e5e39733-85fb-4dbd-a474-7bdda9f61eba)
+
+
+##### ERCC文件夹
+
+![image](https://github.com/user-attachments/assets/eb67441a-397c-4820-98ff-32f3832acfca)
 
 ### 快去试试吧！
 
