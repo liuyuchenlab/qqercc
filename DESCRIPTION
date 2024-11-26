@@ -1,0 +1,19 @@
+Package: qqercc
+Type: Package
+Title: Quickly query ERCC normalization data
+Version: 0.1.0
+Author: LIU Yu-chen
+Maintainer: The package maintainer <gagalab@foxmail.com>
+Description: Easy to get ERCC normalization data.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    DESeq2,
+    ggplot2,
+    ggpubr,
+    openxlsx
+Depends: 
+    dplyr,
+    RColorBrewer
+RoxygenNote: 7.3.2
