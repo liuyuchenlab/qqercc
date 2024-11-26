@@ -28,11 +28,11 @@ library(qqercc)
 ```
 result <- qqercc("ercc.xlsx", control_group = "control")  
 ```
-##### normalized total reads plot  
+###### normalized total reads plot  
 
 ![image](https://github.com/user-attachments/assets/4e754b12-9064-4a58-bfb2-4ab76a14ba27)
 
-##### 可以添加自定义颜色和统计比较
+###### 可以添加自定义颜色和统计比较
 
 ```
 #定义比较组
@@ -50,7 +50,7 @@ result <- qqercc("plab_ercc.xlsx", control_group = "DMSO-2-cell",
 ![image](https://github.com/user-attachments/assets/7241afa4-73af-4550-944f-343e8919dab8)
 
 
-##### 可以通过format选择其他可视化形式：点图
+###### 可以通过format选择其他可视化形式：点图
 
 ```
 result <- qqercc("ercc.xlsx", control_group = "control", 
