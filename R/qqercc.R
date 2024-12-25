@@ -81,7 +81,7 @@ qqercc <- function(ercc_file, control_group, comparisons = NULL, method = "deseq
 
   } else if (method == "deseq2") {
     # DESeq2方法
-    countData <- as.matrix(ercc_data)  # 确保输入是矩阵
+    countData <- as.matrix(ercc)  # 确保输入是矩阵
     sampleInfo <- data.frame(row.names = colnames(countData), condition = gsub("-\\d+$", "", colnames(countData)))
 
     dds <- DESeq2::DESeqDataSetFromMatrix(countData = countData, colData = sampleInfo, design = ~1)
@@ -108,7 +108,7 @@ qqercc <- function(ercc_file, control_group, comparisons = NULL, method = "deseq
 
   # 如果不是 DESeq2，则使用标准化因子对原始数据进行标准化
   if (method != "deseq2") {
-    normalized_counts <- sweep(ercc_data, 2, normalization_factors, FUN = "*", check.margin = FALSE)
+    normalized_counts <- sweep(ercc, 2, normalization_factors, FUN = "*", check.margin = FALSE)
   }
 
   # 保存标准化后的结果
