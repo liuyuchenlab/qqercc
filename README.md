@@ -30,47 +30,53 @@ result <- qqercc("ercc.xlsx", control_group = "control")
 ```
 ###### normalized total reads plot  
 
-![image](https://github.com/user-attachments/assets/4e754b12-9064-4a58-bfb2-4ab76a14ba27)
+![image](https://github.com/user-attachments/assets/8a8aac0f-0e22-4315-be0f-546eab93a4de)
+
 
 ###### 可以添加自定义颜色和统计比较
 
 ```
 #定义比较组
 comparisons_list <- list(
-  c("DMSO-2-cell", "PlaB-2-cell"))
+  c("control", "treat"))
 # 定义颜色，与比较组对应
-colors <- c("#FF5733", "#33FF57")  # 每个颜色对应comparisons_list中的一组比较
+colors <- c("#CE1212", "#810000")  # 每个颜色对应comparisons_list中的一组比较
 #运行函数
-result <- qqercc("plab_ercc.xlsx", control_group = "DMSO-2-cell", 
+result <- qqercc("ercc.xlsx", control_group = "control", 
                  comparisons = comparisons_list, method = "deseq2", 
-                 format = "dot", 
+                 format = "bar", 
                  color = colors
-                )
+)
 ```
-![image](https://github.com/user-attachments/assets/7241afa4-73af-4550-944f-343e8919dab8)
+![image](https://github.com/user-attachments/assets/e4c531e2-463d-4382-b099-9904efba9a38)
+
 
 
 ###### 可以通过format选择其他可视化形式：点图
 
 ```
 result <- qqercc("ercc.xlsx", control_group = "control", 
-                 comparisons = comparisons_list,
-                 format = "dot"
+                 comparisons = comparisons_list, method = "deseq2", 
+                 format = "dot", 
+                 color = colors
 )
 ```
 
-![image](https://github.com/user-attachments/assets/9910f215-20d4-4eb0-bedd-6053516420c0)
+![image](https://github.com/user-attachments/assets/433a7be2-61cb-4d94-923e-350a59d3a5d2)
+
 
 ###### 或者箱线图
 
 ```
 result <- qqercc("ercc.xlsx", control_group = "control", 
-                 comparisons = comparisons_list,
-                 format = "box"
+                 comparisons = comparisons_list, method = "deseq2", 
+                 format = "box", 
+                 color = colors
 )
 ```
 
-![image](https://github.com/user-attachments/assets/e5e39733-85fb-4dbd-a474-7bdda9f61eba)
+![image](https://github.com/user-attachments/assets/14618b6c-01ec-42c0-a9c6-3ff45de79048)
+
 
 
 ##### ERCC文件夹
