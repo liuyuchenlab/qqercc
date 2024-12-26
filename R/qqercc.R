@@ -51,7 +51,7 @@ qqercc <- function(ercc_file, control_group, comparisons = NULL, method = "deseq
 
   # 读取数据
   ercc <- openxlsx::read.xlsx(ercc_file, rowNames = TRUE)
-
+  ercc <- ercc[rowSums(ercc != 0) > 0, ]
   # 提取ERCC数据（仅包含ERCC基因的所有行）
   ercc_data <- ercc[grep("ERCC-", rownames(ercc)), ]
 
@@ -80,27 +80,32 @@ qqercc <- function(ercc_file, control_group, comparisons = NULL, method = "deseq
     normalization_factors <- ercc_medians / total_median_average
 
   } else if (method == "deseq2") {
-    # DESeq2方法
-    countData <- as.matrix(ercc)  # 确保输入是矩阵
+    #DESeq2方法
+    # 确保输入是矩阵
+    countData <- as.matrix(ercc)
+
+    # 提取分组信息
     sampleInfo <- data.frame(row.names = colnames(countData), condition = gsub("-\\d+$", "", colnames(countData)))
 
-    dds <- DESeq2::DESeqDataSetFromMatrix(countData = countData, colData = sampleInfo, design = ~1)
+    # 创建 DESeqDataSet
+    dds <- DESeq2::DESeqDataSetFromMatrix(countData = countData, colData = sampleInfo, design = ~ condition)
 
-    # 提取ERCC基因的行索引
-    ercc_rows <- grep("ERCC-", rownames(countData))
+    # 提取 ERCC 基因数据
+    ercc_rows <- grep("^ERCC-", rownames(countData))
 
-    # 基于ERCC基因子集创建一个单独的DESeqDataSet用于估算大小因子
-    dds_ercc <- dds[ercc_rows, ]
-    dds_ercc <- DESeq2::estimateSizeFactors(dds_ercc)
+    # 计算基于 ERCC 基因的大小因子
+    # 仅使用 ERCC 基因的数据来计算大小因子
+    dds <- estimateSizeFactors(dds, type = 'iterate', controlGenes = ercc_rows)
 
-    # 获取基于ERCC估算的大小因子
-    size_factors_ercc <- DESeq2::sizeFactors(dds_ercc)
+    # 运行 DESeq2 分析
+    dds <- DESeq(dds)
 
-    # 应用到原始DESeqDataSet
-    DESeq2::sizeFactors(dds) <- size_factors_ercc[colnames(dds)]
+    # 检查 size factors 是否存在
+    sizeFactors(dds)  # 这个应该输出一个大小因子，如果是NA就说明计算失败
 
-    # 使用DESeq2进行标准化
-    normalized_counts <- as.data.frame(DESeq2::counts(dds, normalized = TRUE))
+    # 获取标准化后的数据
+    normalized_counts <- counts(dds, normalized = TRUE)
+
 
   } else {
     stop("Invalid method. Please choose 'mean', 'median', or 'deseq2'.")
@@ -196,7 +201,7 @@ qqercc <- function(ercc_file, control_group, comparisons = NULL, method = "deseq
       theme_settings
   } else if (format == "dot") {
     p_orig <- ggplot2::ggplot(plot_summary, aes(x = condition, y = mean_reads, color = condition)) +
-      ggplot2::geom_point(position = position_jitterdodge(jitter.width = 0.1, dodge.width = 0.8)) +
+      ggplot2::geom_point(position = position_dodge(width = 2)) +
       ggplot2::labs(y = "Total Reads", x = "", title = "ERCC Spike-in Normalization") +
       ggplot2::theme_classic() +
       scale_color_manual(values = color_palette) +
@@ -298,3 +303,6 @@ qqercc <- function(ercc_file, control_group, comparisons = NULL, method = "deseq
     plot_with_comparison = p_comp
   ))
 }
+
+
+
